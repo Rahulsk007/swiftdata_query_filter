@@ -12,13 +12,25 @@ import SwiftData
 struct PersonView: View {
     
    
-    @Query(
-        filter: #Predicate<PersonModel> {
-            $0.name.contains("Rahul")
-        }
-    )private var people: [PersonModel]
+//    @Query(
+//        filter: #Predicate<PersonModel> {
+//            $0.name.contains("Rahul")
+//        }
+//    )private var people: [PersonModel]
+    
+    @Query private var people: [PersonModel]
     
     @Environment(\ .modelContext) private var context
+    
+    init(searchText: String) {
+        if !searchText.isEmpty {
+            self._people = Query(
+                filter: #Predicate<PersonModel> {
+                    $0.name.contains(searchText)
+                }
+            )
+        }
+    }
     
     // Create a function for reads data from the JSON file and save in to swift database
     private func loadJson () {
@@ -70,6 +82,7 @@ struct PersonView: View {
             List(people){value in
                 Text(value.name)
             }
+            .listStyle(.plain)
             
             Button("Update Data"){
                 loadJson()
@@ -79,7 +92,7 @@ struct PersonView: View {
 }
 
 
-#Preview {
-    PersonView()
-        .modelContainer(for: PersonModel.self)
-}
+//#Preview {
+//    PersonView()
+//        .modelContainer(for: PersonModel.self)
+//}
